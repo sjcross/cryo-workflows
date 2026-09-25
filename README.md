@@ -139,6 +139,15 @@ Loaded fluorescence channels are concatenated together and saved as a merged tif
 
 ### WF3_Rendering
 #### Details
+Workflow takes aligned fluorescence microscopy and EM images and creates a side-by-side montage image showing user annotated cell and excluded regions.
+
+The input image is scaled in X and Y according to a user-defined scaling factor.  This is done because input images are often at a much higher resolution than required in the final render.  
+
+The user can optionally select cell and excluded regions on the image and assign annotations to each of these.  In the final render, the cell regions will be shown in yellow and the excluded regions in red.  Both of these are optional and as such, the workflow can proceed if no regions are selected.  If existing region .zip files (suffixed with either "_cells" or "_excluded") are present in the input folder, these will be loaded automatically.
+
+Selected regions are rendered onto both the light microscopy and cryo EM images and the overlay components flattened such that they are no longer ImageJ overlays, but instead are contained within the pixel values.
+
+The two images are combined side-by-side along with a white separating bar of user-defined width.  This final image is saved to a tif image with the suffix "_render".
 
 #### Assumptions
 - Input image is a single plane and timepoint and has at least two channels, one for light microscopy and the other for cryo EM.
@@ -160,6 +169,7 @@ Loaded fluorescence channels are concatenated together and saved as a merged tif
 - Rendering > Rendering
     - "Light channel(s)" controls which channels of the input image are displayed on the left (light microscopy) side of the rendered image.
     - "Cryo channel" controls which channel of the input image is displayed on the right side of the rendered image.
+    - "Gap width (px)" is the width of a white bar that sits between the two sides of the image.  To remove this bar, set the width to 0 px.
 - Rendering > Add annotations
     - "Font size" the font size of the annotations added to each region in the rendered image.
     - Note: This module is optional and annotations will only be displayed when this module is enabled.
