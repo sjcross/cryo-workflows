@@ -31,6 +31,15 @@ Loading all workflows follows the same initial steps, outlined below.  Once a wo
 
 ### WF1_Colocalisation
 #### Details
+Workflow calculates Pearson's Correlation Coefficient on a cell-by-cell basis for two user-defined fluorescence channels.  
+
+First, nuclei are detected using an additional fluorescence channel with an automated method.  This method involves normalising image intensities, reducing noise with a 2 px radius 2D median filter and binarising the image using the Huang threshold method.  Any holes in binarised shapes are filled in and nuclei detected using connected components labelling (integrated via the [MorphoLibJ](https://github.com/ijpb/MorphoLibJ) plugin).  Nuclei smaller than a user-defined threshold are removed from further analysis.
+
+Subsequently, cells are detected from a separate cell mask channel using a manual approach in which users draw round each cell.  Cells can be defined in 3D using a subset of slices, with region interpolation used to complete missing slices.  Any overlap between adjacent cells is removed, such that each pixel of the image corresponds to no more than one cell.
+
+Cytoplasmic regions are segmented by subtracting the nuclear masks from the selected cells.  Pearson's correlation coefficient is calculated for each cytoplasmic region separately using the [Coloc2](https://github.com/fiji/Colocalisation_Analysis) Fiji plugin.  Areas (from projecting the objects along the Z-axis) and 3D volumes are measured for each cytoplasm.
+
+Finally, visual representations of the cells are created by compositing cytoplasm outlines on the input image.  Each outline is given a random colour to help identify different cells.  ID numbers are added to each cell, which correspond to the results in the output Excel spreadsheet (see [Workflow output](#workflow-output-1) for more details).
 
 #### Assumptions
 - Single files that contain all channels (i.e. each channel isn't in a separate file)
@@ -64,5 +73,19 @@ Loading all workflows follows the same initial steps, outlined below.  Once a wo
 #### Workflow output
 
 ### WF2_Grid_focussing
+#### Details
+
+#### Assumptions
+
+#### Parameters
+
+#### Workflow output
 
 ### WF3_Rendering
+#### Details
+
+#### Assumptions
+
+#### Parameters
+
+#### Workflow output
