@@ -132,6 +132,11 @@ Loaded fluorescence channels are concatenated together and saved as a merged tif
 
 
 #### Workflow output
+- Image files suffixed with "_Green", "_Blue" and "_BF" for the green, blue and brightfield channels, respectively.  These contain the individual channels and are only output when the relevant channel is enabled.
+- Image file suffixed with "_merge_FL" contains both green and blue channels.
+- Image file suffixed with "_merge_FLBF" contains any enabled fluorescence channels and the brightfield channel.  It will only be rendered when the brightfield channel is enabled.
+- Image file suffixed with "_merge_FLBFCryo" contains all enabled fluorescence and brightfield images as well as the aligned cryo EM image.
+- Note: In all cases, the scale bar will be displayed if this parameter is enabled.  Scale bars are stored as ImageJ overlays, so will only be visible in ImageJ or Fiji.  To create a final render, go to "Image > Overlay > Flatten".
 
 ### WF3_Rendering
 #### Details
