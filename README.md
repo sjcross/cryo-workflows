@@ -4,8 +4,8 @@ Workflows to handle images of EM grids imaged both by cyro EM and fluorescence m
 This repository contains the following workflows.  These are described in more detail in the [Usage and details](#usage-and-details) section:
 
 - [WF1_Colocalisation](#wf1_colocalisation): Measures Pearson's Correlation Coefficient (PCC) values for manually selected cells on user-specified fluorescence channels.  Can be run in either 2D or 3D.
-- [WF2_Grid_focussing](#wf2_grid_focussing): Reduces Z-stacks taken from FM to a single plane, then optionally, can align these to cryo EM images.
-- [WF3_Rendering](#wf3_rendering): Allows for regions to be annotated onto FM and cryo images (obtained using "WF2_Grid_focussing") and 
+- [WF2_Grid_focusing](#wf2_grid_focusing): Reduces Z-stacks taken from FM to a single plane, then optionally, can align these to cryo EM images.
+- [WF3_Rendering](#wf3_rendering): Allows for regions to be annotated onto FM and cryo images (obtained using "WF2_Grid_focusing") and 
 
 ## Installation
 To use these workflows, please follow the steps below.  The same installation is compatible with all three worfklows:
@@ -42,7 +42,7 @@ Cytoplasmic regions are segmented by subtracting the nuclear masks from the sele
 Finally, visual representations of the cells are created by compositing cytoplasm outlines on the input image.  Each outline is given a random colour to help identify different cells.  ID numbers are added to each cell, which correspond to the results in the output Excel spreadsheet (see [Workflow output](#workflow-output-1) for more details).
 
 #### Assumptions
-- Single files that contain all channels (i.e. each channel isn't in a separate file)
+- Input files are single files that contain all channels (i.e. each channel isn't in a separate file)
 - Images have spatial calibrations in the metadata that can be read when loaded directly into Fiji.
 
 #### Parameters
@@ -64,6 +64,7 @@ Finally, visual representations of the cells are created by compositing cytoplas
     - When enabled, this allows cell outlines to be defined.  At runtime, an image showing the cell mask and nuclear channels will be displayed along with a region selection control panel.  The aim is to draw round a cell, then click "Add as new object", at which point it will appear in a region list in the control panel.  This process is repeated for all cells.  
     - If 3D stacks are being used, once the first slice has been defined, subsequent slices can be added to the same object, by clicking "Add to existing object".  In 3D, missing slices will be interpolated, so it's not necessary to annotate every slice.  
     - Once complete, click "Finish adding objects".
+    - Note: If the workflow has already been run, the previously-selected cells will be shown.  This allows for previous selections to be edited.
     - Note: Overlap between adjacent cells will be automatically resolved later in the workflow.
 - Visualisation > Show image
     - When enabled, an image will be displayed at run time showing the selected cells outlined in random colours.  Numbers indicate the cell ID and correspond to the "OBJECT_ID" column in the output Excel file.
@@ -71,8 +72,22 @@ Finally, visual representations of the cells are created by compositing cytoplas
     - When enabled, the above-described cell outline image will be saved to the same folder as the input image.
 
 #### Workflow output
+- Image file suffixed with "_detected" shows the detected cytoplasm regions outlined in randomly-selected colours.  ID numbers are the same as those shown in the "OBJECT_ID" column of the Excel file.  Overlay elements are stored as ImageJ overlays, so must be opened in ImageJ or Fiji to be visible; this allows brightness/contrast to be changed before rendering.  To render a final image, go to "Image > Overlay > Flatten".
+- Zip files suffixed with "_cells" and "_cytoplasm".  These are zipped ImageJ region of interest (ROI) files, which record the exact coordinates of the analysed regions.  These allow previously-selected cells to be edited on subsequent workflow runs.
+- Excel file with the following sheets:
+    - "Cytoplasm" contains one row per detected cytoplasm object.  Results from all files are combined into a single spreadsheet, so this will contain results from all processed images.  This has the following columns:
+        - "OBJECT_ID" is the unique (within this image) ID of the cytoplasm.  It is the same number as shown on the "_detected" image.
+        - "Filename" is the filename of the processed image.
+        - "Filepath" is the folder path of the processed image.
+        - "Series name" is the name of the processed series.  If the input file was not a multi-series format, this simply shows the filename.
+        - "Series number" is the index of the processed series.
+        - "COLOCALISATION // Fl1-Fl2_PCC" is the Pearson's Corellation Coefficient for the specified fluorescence channels.
+        - "SHAPE // AREA_(µm²)" is the 2D (projected) area of the cytoplasm object.  If a 3D object was used, the object is Z-projected first, such that the resulting object is a silhouette.
+        - "SHAPE // VOLUME_(µm³)" is the 3D volume of the cytoplasm object.
+    - "Configuration" records key information about the system and workflow.  This can be used for diagnostic information if problems arise.  It also contains the full workflow configuration and thus allows MIA to directly read the .xlsx file as a valid workflow file.
+    - "Log" records any warnings or errors that were displayed to the ImageJ console during the workflow run.
 
-### WF2_Grid_focussing
+### WF2_Grid_focusing
 #### Details
 
 #### Assumptions
