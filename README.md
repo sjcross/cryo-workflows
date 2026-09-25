@@ -89,12 +89,19 @@ Finally, visual representations of the cells are created by compositing cytoplas
 
 ### WF2_Grid_focusing
 #### Details
+Workflow reduces a Z-stack of fluorescence microscopy (FM) images to a single slice and outputs various combinations of channels.  Optionally, an additional cryoEM image can be manually aligned to the FM images and rendered as an extra channel.
+
+For each selected channel (green, blue and/or brightfield), the input Z-stack is either locally focused or Z-projected.  When in local focus mode, the stack resolution is reduced to 0.5x the original size along the X and Y axes; this is purely for performance purposes.  For each XY location in the scaled image stack, the local variance of a 51 x 51 px<sup>2</sup> kernel is calculated and the best focus position taken to be the slice with the greatest value.  The pixel value at this slice is assigned to the XY location in the output image; however, it is possible to systematically shift which slice is used with the "Slice offset" parameters.  When in "Z-projection" mode, a simple maximum intensity Z-projection is used to reduce the image stack to 2D.
+
+Depending on the state of the "Flip X-axis" and "Flip Y-axis" parameters, the 2D image can be flipped as required.  A scale bar is optionally added to the image and the single channel saved to tif image.
+
+Loaded fluorescence channels are concatenated together and saved as a merged tif image with the suffix "_merge_FL".  If the brightfield channel was also loaded, an additional merge containing this is saved with the suffix "_merge_FLBF".
 
 #### Assumptions
 - Input fluorescence microscopy (FM) images are single files that contain all channels (i.e. each channel isn't in a separate file).
 - Optional cryo EM images are provided as separate files.
 - FM and cryo EM images do not need to be the same format or resolution.  The workflow will automatically covert them to compatible formats.
-- FM images have spatial calibrations in the metadata that can be read when loaded directly into Fiji.  This isn't necessary for cryo EM images.
+- FM images have spatial calibrations in the metadata that can be read when loaded directly into Fiji.
 
 #### Parameters
 - File selection > Input control
@@ -119,7 +126,8 @@ Finally, visual representations of the cells are created by compositing cytoplas
 - Processing > Add brightfield image
     - All parameters as described above for green channel.
 - Cryo alignment > Add atlas image
-    - "Atlas file path" is the cryoEM image to add to the output images.
+    - "Atlas file path" is the cryo EM image to add to the output images.
+    - At runtime, the projected FM image and cryo EM images will be displayed along with a dialog box for selecting matching point pairs.  The user should click a matching point in each image, then click "Add pair(s)".  This process should be repeated until at least two matching point pairs have been selected, at which point the user clicks "Finish".
     - Note: This module is optional.  If turned off, no cryo EM image will be shown in the output images.
 
 
